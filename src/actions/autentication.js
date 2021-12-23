@@ -1,40 +1,28 @@
-import authenticationService from "../services/authentication-service";
-import { SIGN_IN_START } from "../reducers/authenticationReducer";
-
-export const singInStart = (response) => ({
-  type: SIGN_IN_START,
-  payload: response,
-});
-
-// export const signIn = () => ({
-//   type: SIGN_IN_START,
-//   promise: authenticationService.signIn(),
-// });
-
-// export const signIn = async (
-//   username,
-//   password,
-//   rememberLogin,
-//   redirectUrl
-// ) => {
-//   const teste = await authenticationService.signIn(
-//     username,
-//     password,
-//     rememberLogin,
-//     redirectUrl
-//   );
-//   console.log(teste, "teste");
-// };
+import {
+  LOAD_FOO_STARTED,
+  LOAD_FOO_FAILED,
+  LOAD_FOO_SUCCESS,
+} from "../reducers/authenticationReducer";
+import apiService from "../services/api-service";
 
 export const signIn =
-  (username, password, rememberLogin, redirectUrl) => async (dispatch) => {
-    return {
-      type: SIGN_IN_START,
-      promise: authenticationService.signIn(
-        username,
-        password,
-        rememberLogin,
-        redirectUrl
-      ),
-    };
+  (username, password, RememberLogin) => async (dispatch) => {
+    try {
+      dispatch({ type: LOAD_FOO_STARTED, payload: null });
+      const Credenciais = {
+        Usuario: "admin@tron.com.br",
+        Senha: "T77r@18n",
+        RememberLogin,
+        ReturnUrl: "ReturnUrl",
+      };
+      const { data } = await apiService.post(
+        "/api/autenticacao/login",
+        Credenciais
+      );
+      if (data) {
+        dispatch({ type: LOAD_FOO_SUCCESS, payload: data });
+      }
+    } catch (error) {
+      dispatch({ type: LOAD_FOO_FAILED, error: true, payload: error });
+    }
   };

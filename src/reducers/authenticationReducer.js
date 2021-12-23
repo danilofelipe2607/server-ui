@@ -1,42 +1,36 @@
-import { handleActions } from "redux-actions";
-import { handle } from "redux-pack";
-import { fromJS } from "immutable";
-import authenticationService from "../services/authentication-service";
-export const SIGN_IN_START = "SIGN_IN_START";
+export const LOAD_FOO_STARTED = "LOAD_FOO_STARTED";
+export const LOAD_FOO_SUCCESS = "LOAD_FOO_SUCCESS";
+export const LOAD_FOO_FAILED = "LOAD_FOO_FAILED";
 
-const initialState = fromJS({
+const initialState = {
   isLoading: false,
   data: null,
   error: null,
-});
+};
 
 function reducer(state = initialState, action) {
-  console.log(state, action, "helllo");
   const { type, payload } = action;
   switch (type) {
-    case SIGN_IN_START:
-      return handle(state, action, {
-        start: (prevState) => ({
-          ...prevState,
-          isLoading: true,
-          error: null,
-        }),
-        finish: (prevState) => ({ ...prevState, isLoading: false }),
-        failure: (prevState) => ({ ...prevState, error: payload }),
-        success: (prevState) => ({ ...prevState, data: payload }),
-      });
+    case LOAD_FOO_STARTED:
+      return {
+        ...state,
+        isLoading: true,
+        error: null,
+      };
+    case LOAD_FOO_SUCCESS:
+      return {
+        ...state,
+        isLoading: false,
+        data: payload,
+      };
+    case LOAD_FOO_FAILED:
+      return {
+        ...state,
+        isLoading: false,
+        error: payload,
+      };
     default:
-      return state;
+      return { ...state };
   }
 }
 export default reducer;
-
-// export const signIn = (username, password, rememberLogin, redirectUrl) => ({
-//   type: SIGN_IN_START,
-//   promise: authenticationService.signIn(
-//     username,
-//     password,
-//     rememberLogin,
-//     redirectUrl
-//   ),
-// });

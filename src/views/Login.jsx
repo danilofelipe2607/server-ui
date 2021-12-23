@@ -1,9 +1,9 @@
 import { useState } from "react";
 import "../css/styles.css";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import { signIn } from "../actions/autentication";
 import queryString from "query-string";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -16,6 +16,30 @@ export default function Login() {
     const qs = queryString.parse(window.location.search);
     dispatch(signIn(username, pass, rememberMe, qs.returnUrl));
   };
+
+  const { isLoading, error, data } = useSelector(
+    (state) => state.authenticationReducer
+  );
+  if (isLoading) {
+    return (
+      <section className="container">
+        <p>Signing in...</p>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="container">
+        <p>There was an error signing in.</p>
+      </section>
+    );
+  }
+
+  if (data) {
+    window.location.href = data.uri;
+    return <div />;
+  }
   return (
     <section>
       <section className="container">
@@ -53,9 +77,8 @@ export default function Login() {
   );
 }
 
-// Login.propTypes = {
-//   signIn: PropTypes.func.isRequired,
-//   isLoading: PropTypes.bool.isRequired,
-//   data: PropTypes.object,
-//   error: PropTypes.object,
-// };
+Login.propTypes = {
+  isLoading: PropTypes.bool,
+  data: PropTypes.object,
+  error: PropTypes.object,
+};
